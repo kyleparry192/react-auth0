@@ -1,8 +1,8 @@
 import React from "react"
-import {Route} from "react-router-dom"
+import {Redirect, Route} from "react-router-dom"
 import Home from "./Home"
 import Profile from "./Profile"
-import NavBar from "./Nav";
+import Nav from "./Nav";
 import Auth from "./auth/Auth";
 import Callback from "./Callback";
 
@@ -11,7 +11,7 @@ function App(props) {
 
     return (
         <>
-            <NavBar/>
+            <Nav auth={auth}/>
             <div>
                 <Route
                     exact
@@ -23,7 +23,15 @@ function App(props) {
                     path={"/callback"}
                     render={props => <Callback auth={auth}{...props}/>}
                 />
-                <Route exact path={"/profile"} component={Profile}/>
+                <Route
+                    exact
+                    path={"/profile"}
+                    render={props =>
+                        auth.isAuthenticated()
+                            ? <Profile auth={auth}{...props}/>
+                            : <Redirect to={"/"}/>
+                    }
+                />
             </div>
         </>
     )
