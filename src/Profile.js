@@ -1,32 +1,29 @@
-import React, {Component} from "react";
+import React, {useEffect, useState} from "react";
 
-class Profile extends Component {
-    state = {
-        profile: null,
-        error: ""
-    };
+function Profile(props) {
 
-    componentDidMount() {
-        this.loadUserProfile();
+    const [profile, setProfile] = useState(null)
+    const [error, setError] = useState("")
+
+    useEffect(() => {
+        loadUserProfile()
+    })
+
+    function loadUserProfile() {
+        props.auth.getProfile((profile, error) => {
+            setProfile(profile)
+            setError(error)
+        })
     }
 
-    loadUserProfile() {
-        this.props.auth.getProfile((profile, error) =>
-            this.setState({profile, error})
-        )
-    }
-
-    render() {
-        const {profile} = this.state;
-        if (!profile) return null;
-
-        return <>
+    return (
+        <>
             <h1>Profile</h1>
-            <p>{profile.nickname}</p>
-            <img src={profile.picture} style={{maxWidth: 50, maxHeight: 50}}/>
-            <pre>{JSON.stringify(profile, null, 2)}</pre>
+            {profile && <p>{profile.nickname}</p>}
+            {profile && <img src={profile.picture} style={{maxWidth: 50, maxHeight: 50}}/>}
+            {profile && <pre>{JSON.stringify(profile, null, 2)}</pre>}
         </>
-    };
+    )
 }
 
-export default Profile;
+export default Profile
